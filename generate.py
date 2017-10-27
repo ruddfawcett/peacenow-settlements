@@ -17,6 +17,7 @@ def scrape():
 
     listing = soup.find(id='settlements-list')
 
+
     settlements = []
 
     for item in listing.findAll('a'):
@@ -36,10 +37,18 @@ def scrape():
         if (type_.replace(' ', '').lower() != 'settlement'):
             continue
 
+        list_items = container.findAll('li')
+
+        for itemSub in list_items:
+            if (itemSub.find('span').text == "Establishment"):
+                year = int(itemSub.findAll('span')[2].text)
+
+
         settlement = {
             'name': name,
             'longitude': float(location.split(' ')[0]),
-            'latitude': float(location.split(' ')[1])
+            'latitude': float(location.split(' ')[1]),
+            'establishment': year
         }
 
         settlements.append(settlement)
@@ -47,6 +56,7 @@ def scrape():
     return settlements
 
 all_settlements = scrape()
+print (all_settlements)
 
 df = pd.DataFrame(all_settlements)
 df.to_csv('nowpeace-settlements.csv', index=False)
